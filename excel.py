@@ -5,7 +5,6 @@ from __future__ import division
 import pandas as pd
 import os
 import time
-import sys
 import platform
 import requests
 import click
@@ -50,7 +49,7 @@ dst_excel = '/Users/ningyu/Desktop/listening/foo.xlsx'
 # mode schema 0x            a                   b
 #             ^--- hex      ^--- filter index   ^--- filter relation
 # 'a' = 0 ,filter all indexes
-# 'a' = 0 ,filter last two indexes
+# 'a' = 1 ,filter last two indexes
 # 'b' = 1 ,filter indexes filtered by 'or' relation
 # 'b' = 0 ,filter indexes filtered by 'and' relation
 def filter_sheet(sheetname, mode):
@@ -80,6 +79,8 @@ def read_sheet(delay=5):
     word_list = ps["word"].tolist()
     for word in word_list:
         if p_version == 'Darwin':
+            if '\'' in word:
+                word = word.replace('\'','')
             os.system('say ' + word)
         elif p_version == 'Windows':
             print(audio_dir + word.replace(' ', '') + '.mp3')
@@ -87,8 +88,9 @@ def read_sheet(delay=5):
         else:
             print("Not support")
         if ' ' in word:
-            delay *= 2
-        time.sleep(delay)
+            time.sleep(delay * 2)
+        else:
+            time.sleep(delay)
 
 
 def cal(df):
