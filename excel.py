@@ -47,14 +47,26 @@ src_excel = '/Users/ningyu/Desktop/listening/record copy.xlsx'
 dst_excel = '/Users/ningyu/Desktop/listening/foo.xlsx'
 
 
+# mode schema 0x            a                   b
+#             ^--- hex      ^--- filter index   ^--- filter relation
+# 'a' = 0 ,filter all indexes
+# 'a' = 0 ,filter last two indexes
+# 'b' = 1 ,filter indexes filtered by 'or' relation
+# 'b' = 0 ,filter indexes filtered by 'and' relation
 def filter_sheet(sheetname, mode):
     ps = pd.read_excel(src_excel, sheetname=sheetname)
     tmp_list = []
-    for i in ps.columns[1:]:
-        if ps[i].count() == 2:
-            continue
-        tmp_list.append(u'(ps[\'%s\']==u\'✕\')' % i)
-    if mode == 1:
+    if (mode >> 1) & 0x1 == 0:
+        for i in ps.columns[1:]:
+            if ps[i].count() == 2:
+                continue
+            tmp_list.append(u'(ps[\'%s\']==u\'✕\')' % i)
+    elif (mode >> 1) & 0x1 == 1:
+        for i in ps.columns[-2:]:
+            if ps[i].count() == 2:
+                continue
+            tmp_list.append(u'(ps[\'%s\']==u\'✕\')' % i)
+    if (mode & 0x01) == 1:
         newps = eval('ps[' + '|'.join(tmp_list) + ']')
     else:
         newps = eval('ps[' + '&'.join(tmp_list) + ']')
@@ -74,6 +86,8 @@ def read_sheet(delay=5):
             os.system(audio_dir + word.replace(' ', '') + '.mp3')
         else:
             print("Not support")
+        if ' ' in word:
+            delay *= 2
         time.sleep(delay)
 
 
@@ -116,7 +130,6 @@ def send_request(word):
 
 
 # check for audio
-
 def get_audio(sheetname, mode):
     ps = pd.read_excel(src_excel, sheetname=sheetname)
     word_list = ps['word'].tolist()
@@ -160,7 +173,7 @@ def main(work, sheet, mode, loop, speed):
         pf = pd.DataFrame(word_new)
         pf.to_excel(dst_excel, sheet_name='Sheet1', index=False, header=False)
 
-        read_sheet(speed)
+        # read_sheet(speed)
 
     # Merge sheet
     if work == 'merge':
