@@ -81,6 +81,7 @@ def read_sheet(delay=5):
         if p_version == 'Darwin':
             if '\'' in word:
                 word = word.replace('\'','')
+                word = word.replace('\'', '')
             os.system('say ' + word)
         elif p_version == 'Windows':
             print(audio_dir + word.replace(' ', '') + '.mp3')
