@@ -80,7 +80,6 @@ def read_sheet(delay=5):
     for word in word_list:
         if p_version == 'Darwin':
             if '\'' in word:
-                word = word.replace('\'','')
                 word = word.replace('\'', '')
             os.system('say ' + word)
         elif p_version == 'Windows':
