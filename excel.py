@@ -1,4 +1,4 @@
-#!/Users/ningyu/Source/virtualenv/excel/bin/python
+#!/Users/syslot/Source/virtualenv/excel/bin/python
 # coding=utf-8
 from __future__ import division
 
@@ -160,8 +160,7 @@ def get_audio(sheetname, mode):
 @click.option('--speed', default=1.5, help='Speed of reading')
 def main(work, sheet, mode, loop, speed):
     if work == 'get_audio':
-        for sheet in sheet_list:
-            get_audio(sheet, '0')
+        for sheet in sheet_list: get_audio(sheet, '0')
 
     all_len = len(sheet_list)
     sheet_index = sheet
